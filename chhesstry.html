@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Positions</title>
+  <style> 
+		table, td, th 	{ border:	 1px solid black;
+						  align: center;
+						  
+						}
+						
+		table, td 		{ width: 	8px;
+						  height: 	8px;
+						  align: center;
+						}
+						
+		#format			{ background-color: #DAA520 ;
+						  color: black;
+						  align: center;
+						}
+		#black 			{background-color: white;
+						 align: center;
+						}
+		#markarea		{background-color:	#CAB414;
+						 align: center;
+						}
+		#horse			{width: 12px;
+						 height: 20px;
+						}
+  </style>
+</head>
+<body>
+
+ 
+  <main>
+    
+		
+      <button  onclick="table()" type="button" id="los">Show possible positions</button>
+	  <p id = "text"></p>
+	  
+  </main>
+ <script>
+ 
+ 
+ 
+
+ var board = [ 	[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,1,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+			
+ ];
+var count = 0;
+makeTable(board)
+
+function makeTable(array) {
+    var table = document.createElement('table');
+		for (var i = 0; i < array.length; i++) {
+			var row = document.createElement('tr');
+				for (var j = 0; j < array[i].length; j++) {
+					var cell = document.createElement('td');
+						
+						cell.textContent = array[i][j];
+						if (format(j+i)==true){
+							cell.id = "black";
+						}
+						
+						if (cell.textContent==0){
+						cell.textContent="   __   ";
+						}
+						else if (cell.textContent==1){
+						cell.textContent= " ";
+						cell.innerHTML='<img id="horse" align = "center" name ="horse" src="horse.png" alt="Selfhtml">';
+						}
+						else if (cell.textContent==2){
+						cell.textContent="?";
+						cell.id="markarea";
+						}
+					row.appendChild(cell);
+					
+				}
+			table.appendChild(row);
+			document.body.appendChild(table);
+		}
+	 table.id = "format";
+	 return table;
+}
+
+
+function format (x){
+	var checkx= parseFloat(x/2);
+		if (checkx == Math.round(checkx) ){
+			return true;
+		}	
+		else{ 
+		return false;
+		}
+}
+
+
+function table(){
+	
+	var element = document.getElementById("format");
+	element.parentNode.removeChild(element);
+
+
+for (row=0;row<=7;row++){
+	for (c=0;c<=7;c++){
+		if (board[row][c]==1){
+			if(row+1 <=7 && c+2<=7)
+				board[row+1][c+2]=2;
+			if(row+1 <=7 && c-2>0)
+				board[row+1][c-2]=2;
+			if(row+2 <=7 && c+1<=7)
+				board[row+2][c+1]=2;
+			if(row+2 <=7 && c-2>0)
+				board[row+2][c-1]=2;
+			if(row-1 >=0 && c+2<=7)
+				board[row-1][c+2]=2;
+			if(row-1 >=0 && c-2>0)
+				board[row-1][c-2]=2;
+			if(row-2 >=0 && c+1<=7)
+				board[row-2][c+1]=2;
+			if(row-2 >=0 && c-1>0)
+				board[row-2][c-1]=2;
+		}
+	}
+}
+
+
+makeTable(board);
+
+}
+
+  </script>
+</body>
+</html>
