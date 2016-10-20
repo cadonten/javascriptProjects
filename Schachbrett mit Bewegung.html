@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de"onkeydown="KeyCheck(event);">
+<head>
+  <meta charset="utf-8">
+  <title>Positions</title>
+  <style> 
+		table, td, th 	{ border:	 1px solid black;
+						  align: center;
+						  
+						}
+						
+		table, td 		{ width: 	8px;
+						  height: 	8px;
+						  align: center;
+						}
+						
+		#format			{ background-color: #DAA520 ;
+						  color: black;
+						  align: center;
+						}
+		#black 			{background-color: white;
+						 align: center;
+						}
+		#markarea		{background-color:	#800000 ;
+						 align: center;
+						}
+						
+		#markarea2		{background-color:	#D03120 ;
+						 align: center;
+						}
+		#markarea3		{background-color:	green;
+						 align: center;
+						}
+		#horse			{width: 12px;
+						 height: 20px;
+						}
+  </style>
+</head>
+<body>
+
+ 
+  <main>
+    
+		
+     <h4> Figur auswählen mit Leertaste, setzen mit Enter</h4>
+	  <p id = "text"></p>
+	  
+  </main>
+ <script>
+ 
+ 
+ 
+
+ var board = [ 	[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,4,0,0,0,0,0,0],
+				[0,0,0,0,2,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+				[0,0,1,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0],
+			
+ ];
+var color = 0;
+var figure =-1;
+var figrow =-1;
+var figcoll =-1;
+var count = 0;
+makeTable(board)
+
+function makeTable(array) {
+    var table = document.createElement('table');
+		for (var i = 0; i < array.length; i++) {
+			var row = document.createElement('tr');
+				for (var j = 0; j < array[i].length; j++) {
+					var cell = document.createElement('td');
+						
+						cell.textContent = array[i][j];
+						if (format(j+i)==true){
+							cell.id = "black";
+						}
+						
+						if (cell.textContent==0){
+							cell.textContent="   __   ";
+						}
+						else if (cell.textContent==2){
+							cell.textContent= " ";
+							cell.innerHTML='<img id="horse" align = "center" name ="horse" src="horse.png" alt="Selfhtml">';
+						}
+						else if (cell.textContent==3){
+							cell.textContent= " ";
+								if (color ==0){
+									cell.id="markarea2";
+									cell.innerHTML='<img id="horse" align = "center" name ="horse" src="horse.png" alt="Selfhtml">';
+								}
+								else if(color==3){
+									cell.id="markarea3";
+									cell.innerHTML='<img id="horse" align = "center" name ="horse" src="horse.png" alt="Selfhtml">';	
+								}
+						}		
+						else if (cell.textContent==4){
+							cell.textContent= " ";
+							cell.innerHTML='<img id="horse" align = "center" name ="horse" src="turm.png" alt="Selfhtml">';
+						}
+						else if (cell.textContent==5){
+							cell.textContent= " ";
+								if (color ==0){
+									cell.id="markarea2";
+									cell.innerHTML='<img id="horse" align = "center" name ="turm" src="turm.png" alt="Selfhtml">';
+								}
+								else if (color==5) {
+									cell.id="markarea3";
+									cell.innerHTML='<img id="horse" align = "center" name ="horse" src="turm.png" alt="Selfhtml">';	
+								}
+						}		
+						else if (cell.textContent==1){
+							cell.textContent="  __  ";
+							cell.id="markarea";
+						}
+					row.appendChild(cell);
+					
+				}
+			table.appendChild(row);
+			document.body.appendChild(table);
+		}
+	 table.id = "format";
+	 return table;
+}
+
+
+function KeyCheck(event) {
+	var KeyID = event.keyCode;
+	
+   
+	if(KeyID==37) {
+    movedown(0,-1,7,8,-8,8,-1,1);
+	}   
+	else if(KeyID==38) {
+    movedown(-1,0,7,8,-1,8,-8,0);
+	}
+	else if (KeyID==39){
+	movedown(0,1,0,8,-8,1,-8,1);
+	}
+	else if (KeyID==40){
+	movedown(1,0,0,1,-8,8,-8,0);
+	}
+	else if (KeyID==13){
+	dropfigure(figrow,figcoll,figure);
+	}
+	else if (KeyID==32){
+	markposition();
+	}
+	else if (KeyID==46){
+	alert(board);
+	}
+	}
+
+
+function format (x){
+	var checkx= parseFloat(x/2);
+		if (checkx == Math.round(checkx) ){
+			return true;
+		}	
+		else{ 
+		return false;
+		}
+}
+
+
+function movedown(stepup, stepdown,otherend,borderhigh, borderlow,borderright,borderleft, direct){
+
+var element = document.getElementById("format");
+element.parentNode.removeChild(element);
+
+	var a=1;
+	for (var up=0; up<=7; up++){
+		for (var down=0; down<=7; down++){
+			if (board[up][down]==1){
+				board[up][down]=0;
+					if (up+borderhigh>7 && up + borderlow <0 && down+borderright>7 && down+borderleft<0){
+						if (direct==0){
+							board[otherend][down]=1;
+							up=7;
+							break;
+						}
+						else{
+							board[up][otherend]=1;
+							up=7;
+							break;
+						}	
+					}
+					else {
+						if (board[up+stepup][down+stepdown]>1){
+							board[up+stepup][down+stepdown]=board[up+stepup][down+stepdown]+1;
+							
+							up=7;
+							break;
+						}
+						else{
+							board[up+stepup][down+stepdown]=1;
+							up=7;
+							break;
+						}
+					}
+			}
+			else if (board[up][down]>2 && format(board[up][down])==false){
+				board[up][down]=board[up][down]-1;
+				color=0;
+					if (up+borderhigh>7 && up + borderlow <0 && down+borderright>7 && down+borderleft<0){
+						if (direct==0){
+							board[otherend][down]=1;
+							up=7;
+							break;
+						}
+						else{
+							board[up][otherend]=1;
+							up=7;
+							break;
+						}	
+					}
+					else {
+						if (board[up+stepup][down+stepdown]>1){
+							board[up+stepup][down+stepdown]=board[up+stepup][down+stepdown]+1;
+							up=7;
+							break;
+						}
+						else{
+							board[up+stepup][down+stepdown]=1;
+							up=7;
+							break;
+						}
+					}
+			}
+		}	
+			if (board[up][down]==1){
+			
+			break;
+			
+		}	
+	}
+makeTable(board);
+}
+
+function markposition(){
+var element = document.getElementById("format");
+element.parentNode.removeChild(element);
+
+	for (i=0; i<=7; i++){
+		for (j=0;j<=7;j++){
+			if(board[i][j]>2 && format(board[i][j])==false){
+				figure = board[i][j];
+				color = board[i][j];
+				figrow=i;
+				figcoll =j;
+				makeTable(board);
+				return;
+			}
+			
+		}
+	}
+makeTable(board);
+}
+
+function dropfigure(row,coll,fig){
+if (fig <0){
+	return;
+}
+else{
+	var element = document.getElementById("format");
+	element.parentNode.removeChild(element);
+
+		for (i=0;i<=7;i++){
+			for (j=0;j<=7;j++){
+				if(board[i][j]==1 || (board[i][j] >1 && format(board[i][j]) ==false) ){
+					if (fig ==3){
+						if (i+1<8 && j-2>=0 ){
+							if(board[i+1][j-2]==board[row][coll] && (format(board[i][j])==false )){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}
+						if (i+1<8 && j+2<8 ){
+							if(board[i+1][j+2]==board[row][coll] && (format(board[i][j])==false )){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}		
+						if (i+2<8 && j-1>=0 ){
+							if(board[i+2][j-1]==board[row][coll] && (format(board[i][j])==false)){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}		
+						if (i+2<8 && j+1<8 ){
+							if(board[i+2][j+1]==board[row][coll] && format(board[i][j])==false){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}
+						
+						if (i-2>=0 && j-1>=0 ){
+							if(board[i-2][j-1]==board[row][coll] && format(board[i][j])==false ){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}
+						if (i-2>=0 && j+1<8 ){
+							if(board[i-2][j+1]==board[row][coll] && format(board[i][j])==false){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}		
+						if (i-1>=0 && j-2>=0 ){
+							if(board[i-1][j-2]==board[row][coll] && format(board[i][j])==false){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}		
+						if (i-1>=0 && j+2<8 ){
+							if(board[i-1][j+2]==board[row][coll] && format(board[i][j])==false){
+								drophorse(row,coll,i,j);
+								fig =-1;
+								return fig;
+							}
+						}
+					}
+					else if (board[i][j]+1!= figure &&  figure == 5){
+						if (j==coll || i==row){
+								for (var block=0;block<=7;block++){
+									if ( (board[i][block]>1 && board[i][block] !=figure-1) || (board[block][j]> 1 && board[block][j] !=figure-1) ){
+										if ( ( ( block > coll && j > block && i==row ) || ( block < coll && j < block && i==row) )||
+											 ( ( block > row && i > block && j==coll ) || ( block < row && i < block && j==coll) )
+											){
+											makeTable(board);
+											return;
+										}
+									}	
+								}							
+							board[row][coll]=0;
+							board[i][j]=5;
+							figure =-1;
+							fig=-1;
+							makeTable(board);
+							return fig;
+						}
+					}
+				}
+			}
+		}
+
+makeTable(board);
+
+}
+}
+ 
+function drophorse(row,coll,i,j){
+board[row][coll]=0;
+board[i][j] = figure;
+makeTable(board);
+
+figure=-1;
+return;
+}
+  </script>
+</body>
+</html>
