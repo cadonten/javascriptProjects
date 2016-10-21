@@ -110,7 +110,11 @@ highmove();
 			monstermove++;
 			monster.style.top = '20px';
 			monster.style.left = 700 + 100*Math.sin(0.02*monstermove)+"px";
-				
+				if ( ( Math.abs(x -parseInt(monster.style.left)) <40 ) || 	
+				   ( Math.abs(y -parseInt(monster.style.top)) <40)	
+				){
+					alert('hit');
+				}
 			}
 }
 
