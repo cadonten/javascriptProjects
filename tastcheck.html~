@@ -93,7 +93,7 @@
  		monstermove++;
  		monster.style.top = '20px';
  		monster.style.left = 700 + 100 * Math.sin(0.02 * monstermove) + "px";
- 		if ((Math.abs(posx - 30 - parseInt(monster.style.left)) < 40) && (Math.abs(posy - parseInt(monster.style.top)) < 40)) {
+ 		if ((Math.abs(posx + 30 - parseInt(monster.style.left)) < 40) && (Math.abs(posy - parseInt(monster.style.top)) < 40)) {
  			alert('hit');
  		}
  	}
