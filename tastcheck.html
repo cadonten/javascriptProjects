@@ -44,10 +44,10 @@
   <div id = "monster"> <img id="monstrum" src= monster.png></div> 
   
   <script>
-  
-highmove();
-
-
+ 
+ var posx =0;
+ var posy =0;
+ 
   block.style.left = '700px';	 
 
 
@@ -87,6 +87,8 @@ highmove();
 			pos++;
 			Strahl.style.top = 500 - 5*pos +"px";
 			Strahl.style.left = parseInt(block.style.left)+22+ "px";
+			posx = parseInt(Strahl.style.left);
+			posy = parseInt(Strahl.style.top);
 				if(Strahl.style.top <='20px'){
 					
 				 }
@@ -96,11 +98,12 @@ highmove();
 	
 }
 
+highmove(posx, posy);
 
  var monstermove = 0;
  monster.style.left = '700px'
  var monst = setInterval(highmove,15);
-  function highmove(){
+  function highmove(x,y){
   	if (monst==100){
 				clearInterval(monst);
 				}
@@ -110,8 +113,8 @@ highmove();
 			monstermove++;
 			monster.style.top = '20px';
 			monster.style.left = 700 + 100*Math.sin(0.02*monstermove)+"px";
-				if ( ( Math.abs(x -parseInt(monster.style.left)) <40 ) || 	
-				   ( Math.abs(y -parseInt(monster.style.top)) <40)	
+				if ( ( Math.abs(x -parseInt(monster.style.left)) <40 ) &&
+				     ( Math.abs(y -parseInt(monster.style.top)) <40)	
 				){
 					alert('hit');
 				}
