@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Equationsystem</title>
+  <style> 
+  
+  </style>
+  
+  <body>
+  
+ <p><input id="a1" value = "2" size = "3"> x <input id="a2" value = "4" size = "3"> y <input id="a3" value = "5" size = "3"> z =<input id="a4" value = "" size = "3"></p>
+ <p><input id="b1" value = "4" size = "3"> x <input id="b2" value = "5" size = "3"> y <input id="b3" value = "6" size = "3"> z =<input id="b4" value = "" size = "3"></p>
+ <p><input id="c1" value = "2" size = "3"> x <input id="c2" value = "2" size = "3"> y <input id="c3" value = "6" size = "3"> z =<input id="c4" value = "" size = "3"></p>
+ <button onclick = "solve()"> Solve </button>
+
+<script>
+
+function solve (){
+
+var Einheit = 	[	[1,0,0],
+					[0,1,0],
+					[0,0,1],
+				];
+var Equat = [		[parseFloat(a1.value), parseFloat(a2.value), parseFloat(a3.value)],
+					[parseFloat(b1.value), parseFloat(b2.value), parseFloat(b3.value)],
+					[parseFloat(c1.value), parseFloat(c2.value), parseFloat(c3.value)],
+			];
+			
+var det = Equat[0][0]*Equat[1][1]*Equat[2][2]+Equat[0][1]*Equat[1][2]*Equat[2][0]+Equat[0][2]*Equat[1][0]*Equat[2][1]-
+		  Equat[2][0]*Equat[1][1]*Equat[0][2]-Equat[2][1]*Equat[1][2]*Equat[0][0]-Equat[2][2]*Equat[1][0]*Equat[0][1];
+		  
+  if (det!=0){
+	Einheit[0][2]=Einheit[0][2]/Equat[0][0];Equat[0][2]=Equat[0][2]/Equat[0][0];
+	Einheit[0][1]=Einheit[0][1]/Equat[0][0];Equat[0][1]=Equat[0][1]/Equat[0][0];
+	Einheit[0][0]=Einheit[0][0]/Equat[0][0];Equat[0][0]=Equat[0][0]/Equat[0][0];
+
+
+	Einheit[1][2]=Einheit[1][2]-Einheit[0][2]*Equat[1][0];Equat[1][2]=Equat[1][2]-Equat[0][2]*Equat[1][0];
+	Einheit[1][1]=Einheit[1][1]-Einheit[0][1]*Equat[1][0];Equat[1][1]=Equat[1][1]-Equat[0][1]*Equat[1][0];
+	Einheit[1][0]=Einheit[1][0]-Einheit[0][0]*Equat[1][0];Equat[1][0]=Equat[1][0]-Equat[0][0]*Equat[1][0];
+
+
+	Einheit[2][2]=Einheit[2][2]-Einheit[0][2]*Equat[2][0];Equat[2][2]=Equat[2][2]-Equat[0][2]*Equat[2][0];
+	Einheit[2][1]=Einheit[2][1]-Einheit[0][1]*Equat[2][0];Equat[2][1]=Equat[2][1]-Equat[0][1]*Equat[2][0];
+	Einheit[2][0]=Einheit[2][0]-Einheit[0][0]*Equat[2][0];Equat[2][0]=Equat[2][0]-Equat[0][0]*Equat[2][0];
+
+	Einheit[1][2]=Einheit[1][2]/Equat[1][1];Equat[1][2]=Equat[1][2]/Equat[1][1];
+	Einheit[1][0]=Einheit[1][0]/Equat[1][1];Equat[1][0]=Equat[1][0]/Equat[1][1];
+	Einheit[1][1]=Einheit[1][1]/Equat[1][1];Equat[1][1]=Equat[1][1]/Equat[1][1];
+
+	Einheit[2][2]=Einheit[2][2]-Einheit[1][2]*Equat[2][1];Equat[2][2]=Equat[2][2]-Equat[1][2]*Equat[2][1];
+	Einheit[2][0]=Einheit[2][0]-Einheit[1][0]*Equat[2][1];Equat[2][0]=Equat[2][0]-Equat[1][0]*Equat[2][1];
+	Einheit[2][1]=Einheit[2][1]-Einheit[1][1]*Equat[2][1];Equat[2][1]=Equat[2][1]-Equat[1][1]*Equat[2][1];
+
+	Einheit[2][1]=Einheit[2][1]/Equat[2][2];Equat[2][1]=Equat[2][1]/Equat[2][2];
+	Einheit[2][0]=Einheit[2][0]/Equat[2][2];Equat[2][0]=Equat[2][0]/Equat[2][2];
+	Einheit[2][2]=Einheit[2][2]/Equat[2][2];Equat[2][2]=Equat[2][2]/Equat[2][2];
+
+	Einheit[0][2]=Einheit[0][2]-Einheit[1][2]*Equat[0][1];Equat[0][2]=Equat[0][2]-Equat[1][2]*Equat[0][1];
+	Einheit[0][0]=Einheit[0][0]-Einheit[1][0]*Equat[0][1];Equat[0][0]=Equat[0][0]-Equat[1][0]*Equat[0][1];
+	Einheit[0][1]=Einheit[0][1]-Einheit[1][1]*Equat[0][1];Equat[0][1]=Equat[0][1]-Equat[1][1]*Equat[0][1];
+
+	Einheit[0][1]=Einheit[0][1]-Einheit[2][1]*Equat[0][2];Equat[0][1]=Equat[0][1]-Equat[2][1]*Equat[0][2];
+	Einheit[0][0]=Einheit[0][0]-Einheit[2][0]*Equat[0][2];Equat[0][0]=Equat[0][0]-Equat[2][0]*Equat[0][2];
+	Einheit[0][2]=Einheit[0][2]-Einheit[2][2]*Equat[0][2];Equat[0][2]=Equat[0][2]-Equat[2][2]*Equat[0][2];
+
+	Einheit[1][1]=Einheit[1][1]-Einheit[2][1]*Equat[1][2];Equat[1][1]=Equat[1][1]-Equat[2][1]*Equat[1][2];
+	Einheit[1][0]=Einheit[1][0]-Einheit[2][0]*Equat[1][2];Equat[1][0]=Equat[1][0]-Equat[2][0]*Equat[1][2];
+	Einheit[1][2]=Einheit[1][2]-Einheit[2][2]*Equat[1][2];Equat[1][2]=Equat[1][2]-Equat[2][2]*Equat[1][2];
+
+	var x1 = Einheit[0][0]*a4.value+Einheit[0][1]*b4.value + Einheit[0][2]*c4.value;
+	var x2 = Einheit[1][0]*a4.value+Einheit[1][1]*b4.value + Einheit[1][2]*c4.value;
+	var x3 = Einheit[2][0]*a4.value+Einheit[2][1]*b4.value + Einheit[2][2]*c4.value;
+
+	alert (" x = "+x1 + " y = "+x2 + " z = "+x3 + "   Determinante: "+det);
+
+	}
+	
+	else{
+	alert("Determinante = 0, nicht eindeutig lösbar!")
+	}
+}
+</script>
+ 
+  </body>
