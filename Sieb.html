@@ -11,10 +11,10 @@
   </style> 
 
   <body>
-  <h2> Sieb des Eratothenes bis 50</h2>
+  <h2> Sieb des Eratothenes bis 100</h2>
   <br>
   
-  <button id = "Prim" type="button" onclick = "findFirstPrime()"> Split!</button>
+  <button id = "Prim" type="button" onclick = "Sieb(2)"> Split!</button>
   <br>
 
   <br>
@@ -22,39 +22,12 @@
   <script>
   
   var Raster = [ 	[1,2,3,4,5,6,7,8,9,10], 
-			[11,12,13,14,15,16,17,18,19,20],
-			[21,22,23,24,25,26,27,28,29,30],
-			[31,32,33,34,35,36,37,38,39,40],
-			[41,42,43,44,45,46,47,48,49,50]
+					[11,12,13,14,15,16,17,18,19,20],
+					[21,22,23,24,25,26,27,28,29,30],
+					[31,32,33,34,35,36,37,38,39,40],
+					[41,42,43,44,45,46,47,48,49,50]
 				];
 				
- function findFirstPrime(){
-  
-  	for (j=0;j<=4; j++){
-		for (k=0;k<=9; k++){
-			if ( Prim(Raster[j][k]) ==true){
-				
-				Sieb(Raster[j][k]);
-				return;
-			}
-			else 
-				Raster[j][k]=0;
-		}
-	}
-
-}
-
-function Prim(Number){
-
-for (i=0; i<=50; i++){
-	var check = parseFloat(Number/i);
-		if (check == Math.round(check) && Number !=2)
-			return false;
-		if (i >= Number)
-			return true;
-}
-return true;
-}
 
 function Test (Number, Divisor){
 
