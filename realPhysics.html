@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://threejs.org/build/three.js" type="text/javascript">
+		</script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js" type="text/javascript">
+		</script>
+		<script src="Physics.js">
+		</script>
+		<button id="btn" onclick="onClick( );">
+			start
+		</button>
+		<button id="btn2" onclick="reset( );">
+			reset
+		</button>
+	</head>
+	<body>
+		<script type="text/javascript">
+		
+			var run = false;
+			
+			var tm = ( new Date ( ) ).getTime ( );
+
+			var then = ( new Date ( ) ).getTime ( ) - tm;
+
+			var now  = ( new Date ( ) ).getTime ( ) - tm;
+		
+			var camera = new THREE.PerspectiveCamera ( 60, window.innerWidth / window.innerHeight, .2, 1000 );
+			
+			camera.position.set ( 0., 50., 100. );
+			
+			camera.up = new THREE.Vector3( 0, 1, 0 );
+			
+			camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+				
+			var scene = new THREE.Scene( );
+			
+			var renderer = new THREE.WebGLRenderer( );
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			
+			document.body.appendChild( renderer.domElement );
+			
+			var oCtl = new THREE.OrbitControls( camera );
+
+			oCtl.addEventListener( 'change', render );
+			
+			var ambientLight = new THREE.AmbientLight( 0xFFFFFF);
+			ambientLight.position.set(0, 8,5);
+			
+			var directionalLight = new THREE.DirectionalLight( 0xFFFFFF);
+			directionalLight.position.set(0, 8,5);
+			directionalLight.rotation.x = Math.pi/4
+			scene.add(directionalLight);
+			scene.add(ambientLight);
+			/*			
+			var planeTx = THREE.ImageUtils.loadTexture( 'https://media.freestocktextures.com/cache/75/63/7563017888b6aa04b6529606090fc78e.jpg' );
+					
+			planeTx.wrapT = THREE.RepeatWrapping;
+			planeTx.wrapS = THREE.RepeatWrapping;
+			planeTx.repeat.set( 10, 10 );
+			*/
+			var plane = new THREE.Mesh( new THREE.PlaneGeometry( 100, 100 ), new THREE.MeshPhongMaterial( {color: 0xDF4212} ) );
+			
+			plane.rotation.x = -.5 * Math.PI;  // Not sure what this number represents.
+			plane.position.x = 2;
+			plane.doubleSided = true;
+
+			scene.add( plane );
+			
+			var earthGeo  = new THREE.SphereGeometry( 10, 32, 32 );
+			
+			var moonGeo = new THREE.SphereGeometry( 5, 32, 32 );
+			/*
+			var earthTx = THREE.ImageUtils.loadTexture( 'http://www.debacher.de/vrml/beispiele/earth2.jpg' );
+					
+			earthTx.wrapT = THREE.RepeatWrapping;
+			earthTx.wrapS = THREE.RepeatWrapping;
+			earthTx.repeat.set( 1, 1 );
+			
+			var moonTx = THREE.ImageUtils.loadTexture( 'http://www.uni-weimar.de/architektur/dsmbfl/blog/alotta/user/home/img/000/000//210.jpg' );
+					
+			moonTx.wrapT = THREE.RepeatWrapping;
+			moonTx.wrapS = THREE.RepeatWrapping;
+			moonTx.repeat.set( 1, 1 );*/
+			
+			var earthMesh = new THREE.Mesh( earthGeo, new THREE.MeshPhongMaterial( { color : 0xD2412F  } ) );
+			var moonMesh = new THREE.Mesh( moonGeo, new THREE.MeshPhongMaterial( { color : 0xFF2421 } ) );
+			
+			scene.add( earthMesh );
+			scene.add( moonMesh );
+
+			var moonPhysics = new PhysSphere( moonMesh, false, Const.SPHERE, 5 );
+			var earthPhysics = new PhysSphere( earthMesh, false, Const.SPHERE, 10 );
+			var planePhysics = new PhysPlane( plane, true, Const.PLANE, 50);
+			
+			var physics = new Physics();
+			physics.add( moonPhysics );
+			physics.add( earthPhysics );
+			physics.add ( planePhysics );
+			
+			function animate( ) {
+			
+				if( !run )
+			
+					return;
+				
+				now = ( new Date( ) ).getTime( ) - tm;
+				
+				var dt = 1e-3 * ( now - then);
+				
+				then = now;
+				requestAnimationFrame( animate );
+			
+				if( 1. < dt || dt < 1. / 120. )
+				
+					return;				
+					
+				physics.run(dt);
+				
+				render( );
+				
+			}
+			
+			function render( ) {
+						
+				oCtl.update( );
+
+				renderer.render( scene, camera );
+			}
+		
+			function onClick( ) {
+				
+				if( run ) {
+				
+					run = false;
+					
+					document.getElementById( "btn" ).innerHTML = "start simulation";					
+					
+					return;
+				}
+				
+				tm = ( new Date ( ) ).getTime ( );
+				
+				reset();
+				
+				run = true;
+				
+				document.getElementById( "btn" ).innerHTML = "stop simulation";					
+
+				animate( );
+			}
+			
+			function reset ( ){
+			
+				earthPhysics.init( 2, new THREE.Vector3( 26, 15, 0 ), new THREE.Vector3( -15., 0, 0 ) );
+				moonPhysics.init( 2, new THREE.Vector3( -25, 15, 0 ), new THREE.Vector3( 5., 0, 0 ) );
+			}
+
+		</script>
+    </body>
+</html>
