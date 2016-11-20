@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="de"onkeydown="KeyCheck(event);"onkeyup="KeyCheck2(event);">
+	<head>>
+		<meta charset=utf-8>
+		<title>
+			Move it
+		</title>
+		<style>
+			body { 
+				margin : 0;
+			}
+			canvas { 
+				width: 90%; 
+				height: 90% 
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<script src="https://threejs.org/build/three.js">
+		</script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+		</script>
+
+		<script>
+		
+			'use strict'
+		
+			var scene = new THREE.Scene( );
+			
+			var camera = new THREE.PerspectiveCamera ( 60, window.innerWidth / window.innerHeight, .2, 1000 );
+			camera.position.set( 0, 7, 50 );		
+			camera.lookAt(0,0,0);
+			var renderer = new THREE.WebGLRenderer( );
+			
+			/*var planeTex = THREE.ImageUtils.loadTexture( 'pics/planeschach.jpg' );
+			planeTexpl.wrapT = THREE.RepeatWrapping;  
+			planeTex.wrapS = THREE.RepeatWrapping;  
+			planeTex.repeat.set( 10, 10 );*/
+			
+			
+			
+			
+			var light = new THREE.PointLight(0xFFFFFF);
+			light.position.set(0,40,40);
+			scene.add(light);
+			var light2 = new THREE.SpotLight(0xFFFFFF);
+			light2.position.set(0,10,20);
+			scene.add(light2);
+			
+			var plane = new THREE.Mesh( new THREE.PlaneGeometry(50, 80), new THREE.MeshPhongMaterial ({color: 0x5F021F})  );
+			plane.rotation.x = -Math.PI/2;
+			scene.add(plane);
+			
+			var wall = new THREE.Mesh( new THREE.PlaneGeometry(20, 10), new THREE.MeshPhongMaterial ({color: 0xAE9C2C})  );
+			wall.position.x = -5;
+			wall.position.z = -5;
+			wall.rotation.y = Math.PI/4;
+			scene.add(wall);
+			
+			var ramp = new THREE.Mesh( new THREE.PlaneGeometry(20, 10), new THREE.MeshPhongMaterial ({color: 0xAE9C2C})  );
+			ramp.position.x = 15;
+			ramp.position.z = 15;
+			ramp.position.y = 2;
+			ramp.rotation.x = -Math.PI/3;
+			//ramp.rotation.y = -Math.PI/4;
+
+			scene.add(ramp);
+			var sphere = new THREE.Mesh();
+					// instantiate a loader
+				var loader = new THREE.JSONLoader();
+
+				loader.load(
+					'ghost.js',
+					function ( geometry, materials ) {
+						var material = new THREE.MultiMaterial( materials );
+						sphere = new THREE.Mesh( geometry, material );
+						scene.add( sphere );
+					}
+				);
+			
+				function SpherePhysics (mass, rad,pos, vel){
+				this.mass = mass;
+				this.pos = pos;
+				this.vel = vel;
+				this.acc = new THREE.Vector3(0,0,0);
+				this.rad = rad;
+				this.J = 2/5*this.mass*this.rad*this.rad;
+				this.x = new THREE.Vector3(1,0,0);
+				this.y = new THREE.Vector3(0,1,0);
+				this.z = new THREE.Vector3(0,0,1);
+				
+				
+				this.phi = new THREE.Vector3(0,0,0);
+				this.dphi = new THREE.Vector3(0,0,0);
+				this.ddphi = new THREE.Vector3(0,0,0); 		
+			}
+
+			SpherePhysics.prototype.move = function (dt) {
+				
+				var dv = this.acc.clone();
+				var dp = this.vel.clone();
+	
+				dp.multiplyScalar(dt);
+				dv.multiplyScalar(dt);
+				
+				this.vel.add(dv);
+				this.pos.add(dp);
+				sphere.rotation.y += this.vel.x;
+				
+				if (sphere.position.y > 1){
+					this.acc.y = -9.81;
+				}
+				else{
+					this.acc.y = 0;
+				}
+			}
+			
+			var spherePhys1 = new SpherePhysics (5, 1, new THREE.Vector3 (0,1,5), new THREE.Vector3(0,0,0) ); 
+					
+			SpherePhysics.prototype.hit = function ( physObj ){
+			
+			this.matrixAutoUpdate = true;
+			
+			var e = physObj.matrix.elements;
+			var u = new THREE.Vector3( e[0], e[1], e[2] );
+			var v = new THREE.Vector3( e[4], e[5], e[6] );
+			var n = new THREE.Vector3( e[8], e[9], e[10] );
+			
+			u.multiplyScalar(Math.abs(physObj.geometry.vertices[0].x) + .5*this.rad );
+			v.multiplyScalar(Math.abs(physObj.geometry.vertices[0].y) + .5*this.rad );
+			var dist = physObj.position.clone().sub(sphere.position);
+			var c = n.dot(dist);
+			if (Math.abs(c) > sphere.bound || c == 0)
+				return;
+			
+			var a = u.dot(dist)/u.dot(u);
+			var b = v.dot(dist)/v.dot(v);
+					
+			if ( Math.abs(a) < 1 && Math.abs(b) < 1) {
+			
+				var e = physObj.matrix.elements;
+				var n = new THREE.Vector3( e[8], e[9], e[10] ).normalize();
+	
+				var scale = this.vel.dot(n);
+				n.multiplyScalar(-2*scale);
+				this.vel.add(n);
+				this.vel.multiplyScalar(.99);
+				//sphere.position.z += 1;
+			}
+			
+			}
+			
+			function KeyCheck(event) {
+				var KeyID = event.keyCode;
+				
+			   	if(KeyID==39) {
+				spherePhys1.acc.set (5,0,0);
+				 
+				}
+				if(KeyID==37) {
+				spherePhys1.acc.set (-5,0,0);
+				}	
+				if(KeyID==40) {
+				spherePhys1.acc.set (0,0,5);
+				}
+				if(KeyID==38) {
+				spherePhys1.acc.set (0,0,-5);
+				}
+			}
+			
+			function KeyCheck2(event) {
+				var KeyID = event.keyCode;
+				
+				if(KeyID==39) {
+				spherePhys1.acc.set (0,0,0);
+				}   
+				if(KeyID==37) {
+				spherePhys1.acc.set (0,0,0);
+				}	
+				if(KeyID==40) {
+				spherePhys1.acc.set (0,0,0);
+				}
+				if(KeyID==38) {
+				spherePhys1.acc.set (0,0,0);
+				}
+			}
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			
+			document.body.appendChild( renderer.domElement );
+			//var oc = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			var then =( new Date( ) ).getTime( );
+			
+			function render( ) {
+				requestAnimationFrame( render );
+				var now =( new Date( ) ).getTime( );
+				var dt = (now-then)*0.001;
+				then = now;
+				if (dt >1/30)
+					return;
+					
+			spherePhys1.move(dt);
+			sphere.position.set (spherePhys1.pos.x,spherePhys1.pos.y,spherePhys1.pos.z)
+			spherePhys1.hit (wall);
+			spherePhys1.hit (ramp);
+			spherePhys1.hit (plane);
+			renderer.render( scene, camera );
+			
+			}
+			render();
+			
+		</script>
+
+	</body>
+
+</html>
